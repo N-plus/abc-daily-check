@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'subscription/subscription_screen.dart';
+
 void main() {
   runApp(const AbcDailyCheckApp());
 }
@@ -340,6 +342,18 @@ class _WeeklyHomePageState extends State<WeeklyHomePage> {
       appBar: AppBar(
         title: const Text('今日のABC'),
         centerTitle: false,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const SubscriptionScreen(),
+                ),
+              );
+            },
+            child: const Text('プレミアム'),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
