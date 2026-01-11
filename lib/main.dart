@@ -22,7 +22,82 @@ class AbcDailyCheckApp extends StatelessWidget {
         useMaterial3: true,
         scaffoldBackgroundColor: const Color(0xFFF8F9FB),
       ),
-      home: const WeeklyHomePage(),
+      home: const BottomNavigationScaffold(),
+    );
+  }
+}
+
+class BottomNavigationScaffold extends StatefulWidget {
+  const BottomNavigationScaffold({super.key});
+
+  @override
+  State<BottomNavigationScaffold> createState() =>
+      _BottomNavigationScaffoldState();
+}
+
+class _BottomNavigationScaffoldState extends State<BottomNavigationScaffold> {
+  int _currentIndex = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: const [
+          WeeklyHomePage(),
+          WaveScreen(),
+          MonthScreen(),
+          SubscriptionScreen(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.view_week),
+            label: '今週',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.trending_up),
+            label: '波',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: '月',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: '設定',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class WaveScreen extends StatelessWidget {
+  const WaveScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Coming soon'),
+    );
+  }
+}
+
+class MonthScreen extends StatelessWidget {
+  const MonthScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text('Coming soon'),
     );
   }
 }
