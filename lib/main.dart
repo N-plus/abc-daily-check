@@ -421,18 +421,6 @@ class _WeeklyHomePageState extends State<WeeklyHomePage> {
       appBar: AppBar(
         title: const Text('今日のABC'),
         centerTitle: false,
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SubscriptionScreen(),
-                ),
-              );
-            },
-            child: const Text('プレミアム'),
-          ),
-        ],
       ),
       body: SafeArea(
         child: Padding(
@@ -509,29 +497,6 @@ class _WeeklyHomePageState extends State<WeeklyHomePage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text(
-                      'サブスク機能',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                    SizedBox(height: 8),
-                    Text('・月・年の波グラフ'),
-                    Text('・月の詳細ビュー'),
-                    Text('・広告削除'),
-                    Text('・テーマカラー / 背景 / A/B/C文字デザイン'),
                   ],
                 ),
               ),
