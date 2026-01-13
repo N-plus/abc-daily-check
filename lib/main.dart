@@ -57,6 +57,10 @@ class _BottomNavigationScaffoldState extends State<BottomNavigationScaffold> {
             _currentIndex = index;
           });
         },
+        selectedItemColor: const Color(0xFF1F2937),
+        unselectedItemColor: const Color(0xFF9CA3AF),
+        backgroundColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.view_week),
