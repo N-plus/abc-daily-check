@@ -80,7 +80,33 @@ class _SubscriptionScreenState extends State<SubscriptionScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.white,
+        automaticallyImplyLeading: false,
+        leadingWidth: 96,
+        leading: TextButton.icon(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            size: 16,
+            color: Color(0xFF1F2937),
+          ),
+          label: const Text(
+            '戻る',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              color: Color(0xFF1F2937),
+            ),
+          ),
+        ),
+      ),
       body: SafeArea(
+        top: false,
         child: Column(
           children: [
             Container(
