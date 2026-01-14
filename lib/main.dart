@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'settings/settings_page.dart';
 import 'subscription/subscription_screen.dart';
 
 void main() {
@@ -47,7 +48,7 @@ class _BottomNavigationScaffoldState extends State<BottomNavigationScaffold> {
           WeeklyHomePage(),
           WaveScreen(),
           MonthScreen(),
-          SubscriptionScreen(),
+          SettingsPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
