@@ -96,13 +96,233 @@ class WaveScreen extends StatelessWidget {
   }
 }
 
-class MonthScreen extends StatelessWidget {
+class MonthScreen extends StatefulWidget {
   const MonthScreen({super.key});
 
   @override
+  State<MonthScreen> createState() => _MonthScreenState();
+}
+
+class _MonthScreenState extends State<MonthScreen> {
+  static const _prefsEntriesKey = 'entries';
+
+  final Map<String, DayEntry> _entries = {};
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadEntries();
+  }
+
+  Future<void> _loadEntries() async {
+    final prefs = await SharedPreferences.getInstance();
+    final stored = prefs.getString(_prefsEntriesKey);
+    if (stored != null) {
+      final decoded = jsonDecode(stored) as Map<String, dynamic>;
+      for (final entry in decoded.entries) {
+        _entries[entry.key] = DayEntry.fromJson(entry.value);
+      }
+    }
+    setState(() {
+      _loading = false;
+    });
+  }
+
+  List<DateTime?> _buildMonthCells(DateTime monthStart) {
+    final daysInMonth = DateUtils.getDaysInMonth(
+      monthStart.year,
+      monthStart.month,
+    );
+    final firstWeekdayOffset = monthStart.weekday - DateTime.monday;
+    final totalCells = ((firstWeekdayOffset + daysInMonth + 6) / 7).floor() * 7;
+
+    return List<DateTime?>.generate(totalCells, (index) {
+      if (index < firstWeekdayOffset) {
+        return null;
+      }
+      final day = index - firstWeekdayOffset + 1;
+      if (day > daysInMonth) {
+        return null;
+      }
+      return DateTime(monthStart.year, monthStart.month, day);
+    });
+  }
+
+  String _formatMonthTitle(DateTime monthStart) {
+    return '${monthStart.year}年${monthStart.month}月';
+  }
+
+  String _weekdayLabel(DateTime date) {
+    const labels = ['月', '火', '水', '木', '金', '土', '日'];
+    return labels[date.weekday - 1];
+  }
+
+  Future<void> _showDayDetail(DateTime date) async {
+    final entry = _entries[_formatDate(date)];
+    final ratingLabel = entry?.rating.label ?? '–';
+    final ratingColor = entry?.rating.color ?? Colors.black26;
+    final memo = entry?.memo?.trim().isNotEmpty == true
+        ? entry!.memo!.trim()
+        : 'メモはありません';
+
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                '${date.month}/${date.day} ${_weekdayLabel(date)}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black54,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                ratingLabel,
+                style: TextStyle(
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: ratingColor,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                memo,
+                style: const TextStyle(
+                  fontSize: 16,
+                  height: 1.5,
+                  color: Colors.black87,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Coming soon'),
+    if (_loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    final now = DateUtils.dateOnly(DateTime.now());
+    final monthStart = DateTime(now.year, now.month);
+    final cells = _buildMonthCells(monthStart);
+    const weekdayLabels = ['月', '火', '水', '木', '金', '土', '日'];
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('月カレンダー'),
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _formatMonthTitle(monthStart),
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: weekdayLabels.map((label) {
+                  return Expanded(
+                    child: Center(
+                      child: Text(
+                        label,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black45,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 8),
+              Expanded(
+                child: GridView.builder(
+                  itemCount: cells.length,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                    mainAxisSpacing: 6,
+                    crossAxisSpacing: 6,
+                    childAspectRatio: 0.9,
+                  ),
+                  itemBuilder: (context, index) {
+                    final date = cells[index];
+                    if (date == null) {
+                      return const SizedBox.shrink();
+                    }
+
+                    final entry = _entries[_formatDate(date)];
+                    final ratingLabel = entry?.rating.label ?? '–';
+                    final ratingColor =
+                        entry?.rating.color ?? Colors.black26;
+
+                    return InkWell(
+                      onTap: () => _showDayDetail(date),
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFFE5E7EB),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              date.day.toString(),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              ratingLabel,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: ratingColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
