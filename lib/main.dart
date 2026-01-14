@@ -134,7 +134,7 @@ class _MonthScreenState extends State<MonthScreen> {
       monthStart.year,
       monthStart.month,
     );
-    final firstWeekdayOffset = monthStart.weekday - DateTime.monday;
+    final firstWeekdayOffset = monthStart.weekday % 7;
     final totalCells = ((firstWeekdayOffset + daysInMonth + 6) / 7).floor() * 7;
 
     return List<DateTime?>.generate(totalCells, (index) {
@@ -223,7 +223,7 @@ class _MonthScreenState extends State<MonthScreen> {
     final now = DateUtils.dateOnly(DateTime.now());
     final monthStart = DateTime(now.year, now.month);
     final cells = _buildMonthCells(monthStart);
-    const weekdayLabels = ['月', '火', '水', '木', '金', '土', '日'];
+    const weekdayLabels = ['日', '月', '火', '水', '木', '金', '土'];
 
     return Scaffold(
       appBar: AppBar(
