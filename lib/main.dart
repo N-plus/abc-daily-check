@@ -134,7 +134,7 @@ class _MonthScreenState extends State<MonthScreen> {
       monthStart.year,
       monthStart.month,
     );
-    final firstWeekdayOffset = monthStart.weekday % 7;
+    final firstWeekdayOffset = (monthStart.weekday + 6) % 7;
     final totalCells = ((firstWeekdayOffset + daysInMonth + 6) / 7).floor() * 7;
 
     return List<DateTime?>.generate(totalCells, (index) {
