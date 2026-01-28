@@ -12,7 +12,7 @@ class SettingsPage extends StatefulWidget {
 class _SettingsPageState extends State<SettingsPage> {
   bool _isPremiumUser = false;
   bool _reminderEnabled = true;
-  TimeOfDay _reminderTime = const TimeOfDay(hour: 9, minute: 0);
+  TimeOfDay _reminderTime = const TimeOfDay(hour: 21, minute: 0);
 
   Future<void> _selectReminderTime() async {
     final picked = await showTimePicker(
