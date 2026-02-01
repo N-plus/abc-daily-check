@@ -38,17 +38,18 @@ class BottomNavigationScaffold extends StatefulWidget {
 
 class _BottomNavigationScaffoldState extends State<BottomNavigationScaffold> {
   int _currentIndex = 0;
+  final GlobalKey<_MonthScreenState> _monthScreenKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: const [
-          WeeklyHomePage(),
-          WaveScreen(),
-          MonthScreen(),
-          SettingsPage(),
+        children: [
+          const WeeklyHomePage(),
+          const WaveScreen(),
+          MonthScreen(key: _monthScreenKey),
+          const SettingsPage(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -57,6 +58,9 @@ class _BottomNavigationScaffoldState extends State<BottomNavigationScaffold> {
           setState(() {
             _currentIndex = index;
           });
+          if (index == 2) {
+            _monthScreenKey.currentState?.reloadEntries();
+          }
         },
         selectedItemColor: const Color(0xFF1F2937),
         unselectedItemColor: const Color(0xFF9CA3AF),
@@ -115,9 +119,20 @@ class _MonthScreenState extends State<MonthScreen> {
     _loadEntries();
   }
 
+  Future<void> reloadEntries() async {
+    if (!mounted) {
+      return;
+    }
+    setState(() {
+      _loading = true;
+    });
+    await _loadEntries();
+  }
+
   Future<void> _loadEntries() async {
     final prefs = await SharedPreferences.getInstance();
     final stored = prefs.getString(_prefsEntriesKey);
+    _entries.clear();
     if (stored != null) {
       final decoded = jsonDecode(stored) as Map<String, dynamic>;
       for (final entry in decoded.entries) {
